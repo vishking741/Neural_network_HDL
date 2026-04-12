@@ -33,8 +33,6 @@
 
 ![Neural Network Architecture](neural_network_diagram.png)
 
-<!-- IMAGE: The diagram above shows Input Layer → Hidden Layers (h1..hn) → Output Layer with all inter-neuron connections, directly mapping to how the Verilog layers are wired together. -->
-
 ### 2.1 Basic Structure
 
 - **Input Layer:** Receives raw data. For MNIST, a flattened 28×28 image = **784 input values**.
@@ -94,8 +92,6 @@ Train Model (Python)  →  Export Weights (Python)  →  .txt Files  →  $readm
 ---
 
 ## 4. Fixed-Point Number Formats
-
-<!-- IMAGE: A bit-field layout diagram showing Q1.15 and Q2.30 bit positions (Sign | Integer | Fractional) would be very clear here. -->
 
 ### Q1.15 — Weights
 
