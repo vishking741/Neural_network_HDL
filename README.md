@@ -31,7 +31,7 @@
 
 ## 2. How a Neural Network Works
 
-![Neural Network Architecture](neural_network_diagram.png)
+![Neural Network Architecture](https://github.com/vishking741/Neural_network_HDL/blob/main/Neural_network_image.png)
 
 ### 2.1 Basic Structure
 
