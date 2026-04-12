@@ -7,7 +7,7 @@
  * using a reduction AND operator.
  * * EXTERNAL FILES: This module dynamically generates file names for each neuron 
  * based on the 'LayerNum' and the neuron's index 'i'. It expects weight files 
- * named "w[Layer]_[Neuron].txt" and bias files "b[Layer]_[Neuron].txt". 
+ * named "w_[Layer]_[Neuron].txt" and bias files "b_[Layer]_[Neuron].txt". 
  * Note: The current ASCII math (8'h30) supports single-digit indices (0-9) only.
  */
 
@@ -34,8 +34,8 @@ module Neuron_Layer #(
     generate
         for (i = 0; i < NUM_NEURONS; i = i + 1) begin : gen_neurons
             // Generate ASCII file names (e.g., w1_0.txt)
-            localparam W_FILE = {"w", LayerNum[7:0] + 8'h30, "_", i[7:0] + 8'h30, ".txt"};
-            localparam B_FILE = {"b", LayerNum[7:0] + 8'h30, "_", i[7:0] + 8'h30, ".txt"};
+            localparam W_FILE = {"w" , "_", LayerNum[7:0] + 8'h30, "_", i[7:0] + 8'h30, ".txt"};
+            localparam B_FILE = {"b" , "_", LayerNum[7:0] + 8'h30, "_", i[7:0] + 8'h30, ".txt"};
             
             // Instantiate individual Finite State Machine (ASM) neurons
             Neuron_ASM #(
