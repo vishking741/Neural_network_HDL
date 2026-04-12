@@ -164,8 +164,8 @@ The naming contract between Python and Verilog is exact — do not change it.
 
 | File | Contains | Example |
 |---|---|---|
-| `w[L]_[N].txt` | All weights for neuron N in layer L | `w1_0.txt` = Layer 1, Neuron 0 |
-| `b[L]_[N].txt` | Bias for neuron N in layer L | `b3_5.txt` = Layer 3, Neuron 5 |
+| `w_[L]_[N].txt` | All weights for neuron N in layer L | `w_1_0.txt` = Layer 1, Neuron 0 |
+| `b_[L]_[N].txt` | Bias for neuron N in layer L | `b_3_5.txt` = Layer 3, Neuron 5 |
 
 ### Output Layer
 
