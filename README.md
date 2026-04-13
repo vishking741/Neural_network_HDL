@@ -415,7 +415,8 @@ Skipping ReLU is architecturally necessary — negative logits carry real class 
 - Inputs for Hardware: Run the input conversion script to generate Q1.15 test files: `python image_to_bin.py` from test_mnist_images
 
 **Step 2 — Hardware Setup**
-- Copy all `.txt` files from `weight_files/` into your Verilog simulation working directory
+- Copy all `.txt` files from `weight_files_3d/` into your Verilog simulation working directory
+- Copy the `.txt` input file generated from the `python image_to_bin.py` into the simulation working directory
 - Compile `.v` files bottom-up: `Weight_ROM_mod` → `multiplier_block` → `accumilator` → `activation` → `Neuron_ASM` → `Out_neuron` → `Neuron_Layer` → `Output_Layer` → `Neural_Network`
 
 **Step 3 — Simulate**
