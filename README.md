@@ -428,10 +428,11 @@ Skipping ReLU is architecturally necessary — negative logits carry real class 
 ## 10. Strengths of This Implementation
 
 - **Fully parametrized design:** Every critical dimension — `D_W`, `P`, `NUM_NEURONS`, `N` — is a Verilog parameter. The entire network can be resized or retargeted by changing only top-level values.
-- **Clean FSM handshake:** The hierarchical `layer_start` / `layer_done` protocol ensures no data race conditions — each layer only begins when the previous one has fully settled.
+- **Clean FSM handshake:** The hierarchical `layer_start` / `layer_done` protocol ensures no data race conditions , each layer only begins when the previous one has fully settled which is easy to debug and more ordered.
 - **Intra-layer parallelism:** All neurons within a layer compute simultaneously via `generate` loops, directly utilizing parallel DSP blocks on the FPGA fabric.
 - **Numerically safe accumulation:** Guard bits (`$clog2(N+1)`) prevent overflow during dot product summation, and the activation module handles saturation and fixed-point truncation cleanly.
 - **Zero-overhead SW-HW integration:** Weight loading via `$readmemb()` needs no extra tools or runtime loaders — the Python quantization output maps directly onto what the hardware expects.
+- **Dataflow-aligned architecture:** The design follows a clear streaming/dataflow/ASM approach where data moves layer-by-layer without unnecessary storage or control overhead. This makes the implementation efficient, easier to debug, and well-suited for FPGA execution.
 
 ---
 
