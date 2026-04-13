@@ -28,7 +28,6 @@ module accumilator #(
     localparam IDLE = 0, ACCUM = 1, ADD_BIAS = 2, DONE = 3;
     reg [1:0] state, next_state;
 
-    // --- Bias Memory Initialization ---
     reg signed [2*D_W-1:0] mem [0:0];
     initial $readmemb(biasFile, mem);
   
@@ -37,7 +36,6 @@ module accumilator #(
     // Internal counter to iterate through the input string
     integer count;
 
-    // --- State Transition Logic ---
     always @(posedge clk or posedge accum_rst) begin
         if(accum_rst) state <= IDLE;
         else state <= next_state;
@@ -47,10 +45,8 @@ module accumilator #(
         next_state = state;
         case(state)
             IDLE:     if(accum_start) next_state = ACCUM;
-            
             // Stay in ACCUM until all N products are added
             ACCUM:    if(count == N - 1) next_state = ADD_BIAS;
-            
             ADD_BIAS: next_state = DONE;
             DONE:     next_state = IDLE;
             default:  next_state = IDLE;
@@ -77,11 +73,10 @@ module accumilator #(
                     count <= count + 1;
                 end
                 ADD_BIAS : begin
-                    // Add the pre-loaded bias from the external text file
                     accum_out <= accum_out + $signed(mem[0]);
                 end
                 DONE : begin
-                    accum_done <= 1'b1; // Signal completion to the Neuron_ASM
+                    accum_done <= 1'b1; 
                 end
             endcase
         end
