@@ -27,16 +27,16 @@ module Neural_Network #(
 );
 
     localparam NUM_HIDDEN = 4; 
-    localparam num_layer1 = 64; 
-    localparam num_layer2 = 32;
-    localparam num_layer3 = 16;
-    localparam num_layer4 = 16;
+    localparam num_layer1 = 256; 
+    localparam num_layer2 = 128;
+    localparam num_layer3 = 64;
+    localparam num_layer4 = 32;
 
     // --- Data Path Wires ---
-    wire [inputNum*D_W - 1 : 0] L1_to_L2;
-    wire [inputNum*D_W - 1 : 0] L2_to_L3;
-    wire [inputNum*D_W - 1 : 0] L3_to_L4;
-    wire [inputNum*D_W - 1 : 0] L4_to_OUT;
+     wire [num_layer1 * D_W - 1 : 0] L1_to_L2;
+     wire [num_layer2 * D_W - 1 : 0] L2_to_L3;
+     wire [num_layer3 * D_W - 1 : 0] L3_to_L4;
+     wire [num_layer4 * D_W - 1 : 0] L4_to_OUT;
     
     // --- Control Handshake Signals ---
     wire [NUM_HIDDEN:0] layer_done_sigs;
