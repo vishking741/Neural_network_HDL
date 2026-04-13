@@ -164,8 +164,17 @@ The naming contract between Python and Verilog is exact — do not change it.
 
 | File | Contains | Example |
 |---|---|---|
-| `w_[L]_[N].txt` | All weights for neuron N in layer L | `w_1_0.txt` = Layer 1, Neuron 0 |
-| `b_[L]_[N].txt` | Bias for neuron N in layer L | `b_3_5.txt` = Layer 3, Neuron 5 |
+| `w_[L]_[NNN].txt` | All weights for neuron N in layer L | `w1_000.txt` = Layer 1, Neuron 0 |
+| `b_[L]_[NNN].txt` | Bias for neuron N in layer L | `b3_005.txt` = Layer 3, Neuron 5 |
+
+**Note:**
+- Neuron indices are **zero-padded to 3 digits (000–255)**.
+- This supports up to 256 neurons per layer.
+- Example sequence:
+  - `w1_000.txt`, `w1_001.txt`, ..., `w1_255.txt`
+  - `b1_000.txt`, `b1_001.txt`, ..., `b1_255.txt`
+
+---
 
 ### Output Layer
 
@@ -174,13 +183,15 @@ The naming contract between Python and Verilog is exact — do not change it.
 | `o_w_[N].txt` | Weights for output neuron N | `o_w_7.txt` |
 | `o_b_[N].txt` | Bias for output neuron N | `o_b_0.txt` |
 
+**Note:**
+- Output layer indices are **not zero-padded** (since there are only 10 classes).
+
+---
+
 ### File Format
 
 - **Weight files:** N lines, each a 16-bit binary string (Q1.15 two's complement), one weight per line.
 - **Bias files:** 1 line, a 32-bit binary string (Q2.30 two's complement). No headers, no spaces.
-
----
-
 ## 7. Software Code
 
 ### 7.1 Training Script
@@ -241,6 +252,22 @@ weight_files/
 ├── o_w_0.txt, o_b_0.txt   ← Output Layer, Neuron 0
 └── o_w_9.txt, o_b_9.txt   ← Output Layer, Neuron 9
 ```
+
+---
+
+### 7.3 Input Data Generation
+
+Input images are stored in the `test_mnist_images` folder and are converted into fixed-point format compatible with the hardware.
+
+- **Input format:** `.png` grayscale mnist images  
+- **Resolution:** Resized to 28 × 28  
+- **Normalization:** Pixel values scaled from [0, 255] → [0, 1]  
+- **Fixed-point format:** Q1.15 (16-bit unsigned for inputs)  
+- **Output:** 784 values per image, each written as a 16-bit binary string  
+- **Output naming:** `<image_name>_q15.txt`  
+  - Example: `digit3.png` → `digit3_q15.txt`
+
+Each output file contains exactly 784 lines (one per pixel), with no headers or spaces.
 
 ---
 
@@ -385,6 +412,7 @@ Skipping ReLU is architecturally necessary — negative logits carry real class 
 **Step 1 — Software**
 - Train the model: `python train.py` → produces `mnist_model.keras`
 - Export weights: `python export_weights.py` → produces `weight_files/` directory
+- Inputs for Hardware: Run the input conversion script to generate Q1.15 test files: `python image_to_bin.py` from test_mnist_images
 
 **Step 2 — Hardware Setup**
 - Copy all `.txt` files from `weight_files/` into your Verilog simulation working directory
@@ -394,8 +422,6 @@ Skipping ReLU is architecturally necessary — negative logits carry real class 
 - Assert `network_start` high for one cycle
 - Wait for `network_done` to pulse high
 - Read `network_out` — the 4-bit value is the predicted digit (0–9)
-
-> **Alignment check:** Python layer sizes (256→128→64→32) and Verilog sizes (`num_layer1`=64, `num_layer2`=32, `num_layer3`=16, `num_layer4`=16) must be matched before export. A mismatch causes wrong ROM dimensions and incorrect inference output.
 
 ---
 
@@ -411,9 +437,10 @@ Skipping ReLU is architecturally necessary — negative logits carry real class 
 
 ## 11. Future Improvements
 
-- **Quantization-aware training:** The current pipeline trains in full float32 first and quantizes afterward — this two-step process introduces rounding errors at every layer that accumulate through the network. Future work will explore training the model with fixed-point constraints applied during training itself, so the network learns to compensate for quantization noise directly, reducing accuracy loss in hardware.
+- **Quantization-aware training:** The current pipeline trains in full float32 first and quantizes afterward , this two-step process introduces rounding errors at every layer that accumulate through the network. Future work will explore training the model with fixed-point constraints applied during training itself, so the network learns to compensate for quantization noise directly, reducing accuracy loss in hardware.
+- **Improvement of Activation Function:**  The current design uses a clamped ReLU because it is simple and easy to implement in hardware. This can be improved by using better activation functions like Sigmoid or Tanh. A simple way to do this is by using a lookup table (for example, `Sigmoid_ROM.v`), where values of the function are already stored in memory. This avoids complex calculations and can improve accuracy while still keeping the hardware design efficient.
 - **Extension to FPGA:** The current implementation is validated only at the simulation level. Future work involves synthesizing the design onto a physical FPGA board (such as Xilinx Artix-7 or Basys-3), mapping the ROM initialization files to on-chip BRAM, and verifying real-time inference with actual timing constraints and resource utilization reports. 
 - **Higher bit-width for better accuracy:** Moving from Q1.15 (16-bit) weights to Q1.31 (32-bit) or IEEE 754 single-precision would close the accuracy gap between software and hardware, at the cost of more DSP resources per neuron.
-- **Increased parallelism factor P:** Raising `P` directly reduces inference latency — with sufficient DSP blocks, P can be set to N, completing each neuron's multiply stage in a single cycle.
+- **Increased parallelism factor P:** Raising `P` directly reduces inference latency , with sufficient DSP blocks, P can be set to N, completing each neuron's multiply stage in a single cycle.
 - **Tree-reduction accumulator:** Replacing the sequential adder with a `$clog2(N)`-depth adder tree would dramatically cut accumulation latency for large layers like Layer 1 (N=784).
   
