@@ -61,8 +61,8 @@
 ### 2.4 Network Architecture
 
 ```
-Input: 784 → Hidden Layer 1: 64 neurons → Hidden Layer 2: 32 neurons
-       → Hidden Layer 3: 16 neurons → Hidden Layer 4: 16 neurons
+Input: 784 → Hidden Layer 1: 256 neurons → Hidden Layer 2: 128 neurons
+       → Hidden Layer 3: 64 neurons → Hidden Layer 4: 32 neurons
        → Output Layer: 10 neurons → argmax → Predicted Digit (0–9)
 ```
 
@@ -321,10 +321,10 @@ Each state asserts `layer_start_sigs[n]`, waits for `layer_done_sigs[n]`, then m
 
 | Bus | Width | Carries |
 |---|---|---|
-| `L1_to_L2` | 1024 bits | Hidden Layer 1 outputs (64 × 16) |
-| `L2_to_L3` | 512 bits | Hidden Layer 2 outputs (32 × 16) |
-| `L3_to_L4` | 256 bits | Hidden Layer 3 outputs (16 × 16) |
-| `L4_to_OUT` | 256 bits | Hidden Layer 4 outputs (16 × 16) |
+| `L1_to_L2` | 4096 bits | Hidden Layer 1 outputs (256 × 16) |
+| `L2_to_L3` | 2048 bits | Hidden Layer 2 outputs (128 × 16) |
+| `L3_to_L4` | 1024 bits | Hidden Layer 3 outputs (64 × 16) |
+| `L4_to_OUT` | 512 bits | Hidden Layer 4 outputs (32 × 16) |
 
 ---
 
