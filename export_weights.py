@@ -4,7 +4,7 @@ import os
 
 # CONFIGURATION
 MODEL_PATH  = "mnist_model.keras"
-OUTPUT_DIR  = "weight_files"
+OUTPUT_DIR  = "weight_files_3d"
 
 # Q1.15 scale for weights
 W_SCALE = 32768.0       # 2^15
@@ -93,7 +93,7 @@ def export_weights():
             if is_output:
                 w_filename = os.path.join(OUTPUT_DIR, f"o_w_{neuron_idx}.txt")
             else:
-                w_filename = os.path.join(OUTPUT_DIR, f"w{layer_idx + 1}_{neuron_idx}.txt")
+                w_filename = os.path.join(OUTPUT_DIR, f"w{layer_idx + 1}_{neuron_idx:03d}.txt")
 
             with open(w_filename, 'w') as f:
                 for input_idx in range(n_inputs):
@@ -105,7 +105,7 @@ def export_weights():
             if is_output:
                 b_filename = os.path.join(OUTPUT_DIR, f"o_b_{neuron_idx}.txt")
             else:
-                b_filename = os.path.join(OUTPUT_DIR, f"b{layer_idx + 1}_{neuron_idx}.txt")
+                b_filename = os.path.join(OUTPUT_DIR, f"b{layer_idx + 1}_{neuron_idx:03d}.txt")
 
             with open(b_filename, 'w') as f:
                 q_val  = float_to_q2_30(biases[neuron_idx])
