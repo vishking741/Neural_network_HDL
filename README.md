@@ -410,8 +410,8 @@ Skipping ReLU is architecturally necessary — negative logits carry real class 
 ## 9. How to Run
 
 **Step 1 — Software**
-- Train the model: `python train.py` → produces `mnist_model.keras`
-- Export weights: `python export_weights.py` → produces `weight_files/` directory
+- Train the model: `python mnist_training.py` → produces `mnist_model.keras`
+- Export weights: `python export_weights.py` → produces `weight_files_3d/` directory
 - Inputs for Hardware: Run the input conversion script to generate Q1.15 test files: `python image_to_bin.py` from test_mnist_images
 
 **Step 2 — Hardware Setup**
